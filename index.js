@@ -45,16 +45,22 @@ const getBalanceOf = async (address) => {
 const insertOneDB = async (obj) => {
     const db = client.db("uninutbotdb");
     const collection = db.collection("users");
-    collection.find().insertOne(obj, (err, results) => {
-        // console.log(results);
-    });
+    const data = await collection.findOne({id: obj.id});
+    if(!data) {
+        collection.insertOne(obj, (err, results) => {
+            console.log(results);
+            console.log(err)
+        });
+        return 'You are registered'
+    } else {
+        return 'You registated'
+    }
 }
 
 const getFindMyInfo = async (id) => {
     const db = client.db("uninutbotdb");
     const collection = db.collection("users");
     const data = await collection.findOne({id: id});
-    console.log(data);
     return data ? data?.first_name : 'Haven`t info (please use registration)';
 }
 
@@ -77,9 +83,9 @@ bot.command('balanceof', ctx => {
     ctx.reply('Please enter your address')
     bot.on('text', async ctx => ctx.reply(await getBalanceOf(ctx.message.text)))
 })
-bot.command('registration', ctx => {
-    insertOneDB(ctx.message.from)
-    ctx.reply('You are registered')
+bot.command('registration', async ctx => {
+    ctx.reply(await insertOneDB(ctx.message.from))
+    // ctx.reply('You are registered')
     // console.log(ctx.message.from)
 })
 bot.command('myinfo', async ctx => {
