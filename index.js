@@ -45,7 +45,7 @@ const getBalanceOf = async (address) => {
 const insertOneDB = async (obj) => {
     const db = client.db("uninutbotdb");
     const collection = db.collection("users");
-    collection.find().toArray(function(err, results){
+    collection.find().insertOne(obj, (err, results) => {
         // console.log(results);
     });
 }
@@ -78,9 +78,9 @@ bot.command('balanceof', ctx => {
     bot.on('text', async ctx => ctx.reply(await getBalanceOf(ctx.message.text)))
 })
 bot.command('registration', ctx => {
+    insertOneDB(ctx.message.from)
     ctx.reply('You are registered')
     // console.log(ctx.message.from)
-    insertOneDB(ctx.message.from)
 })
 bot.command('myinfo', async ctx => {
     ctx.reply(await getFindMyInfo(ctx.message.from.id))
