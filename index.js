@@ -1,9 +1,56 @@
-const { Telegraf } = require('telegraf')
-const Web3 = require('web3')
-const ABI = require('./ABI.json')
+import { ChainId, Token, WETH, Fetcher, Route } from '@uniswap/sdk';
+import { Telegraf } from 'telegraf';
+import Web3 from 'web3';
+import mongodb from "mongodb";
+const MongoClient = mongodb.MongoClient; 
 
-const { MongoClient } = require("mongodb");  
-                                                                                                                                     
+import ABI from './ABI.json';
+import pairAbiJson from './pairAbiJson.json';
+
+const web3 = new Web3('https://ropsten.infura.io/v3/8ca77c4631f14dccb88318200cfca61d')
+const CONTRACT = new web3.eth.Contract(ABI, '0x21AFF2C46C3AB351F18555deb2396284aC7aDC84')
+
+// get pair contract
+const PBTC = new Token(3, '0x9b3dcd8aa0fcc5d6dea920a2da28309908fa8a70', 18)
+
+const getPairContract = async () => {
+    const pair = await Fetcher.fetchPairData(PBTC, WETH[PBTC.chainId])
+    const route = new Route([pair], WETH[PBTC.chainId])
+
+    console.log('PBTC - WETH', route.midPrice.toSignificant(6))
+    console.log('WETH - PBTC', route.midPrice.invert().toSignificant(6))
+
+    const result = `PBTC - WETH: ${route.midPrice.toSignificant(6)}`
+    return result
+}
+
+// contract uniswap
+const address = '0xb277A0008b5704b786013D2166370589B837AC3B'
+const contract = new web3.eth.Contract(pairAbiJson, address)  
+
+contract.getPastEvents(
+    'AllEvents',
+    {
+      fromBlock: 5854000,
+      toBlock: 'latest'
+    },
+    (err, events) => {
+        // console.log(events)
+    }
+)
+
+// test contract
+const getFreeCirculation = async () => {
+    const data = await CONTRACT.methods.freeCirculation().call();
+    return data;
+}
+
+const getBalanceOf = async (address) => {
+    const data = await CONTRACT.methods.balanceOf(address).call();
+    return data;
+}
+
+// db connect
 const url = "mongodb+srv://Andrew:Andrew@cluster0.yxjbg.mongodb.net/uninutbotdb?retryWrites=true&w=majority";
 const client = new MongoClient(url);
 
@@ -27,21 +74,6 @@ async function run() {
 
 run().catch(console.dir);
 
-const bot = new Telegraf('1738399962:AAFOcarblTa3ZYlA7z5STs_y3E3o3GH8rSM')
-
-const web3 = new Web3('https://ropsten.infura.io/v3/8ca77c4631f14dccb88318200cfca61d')
-const CONTRACT = new web3.eth.Contract(ABI, '0x21AFF2C46C3AB351F18555deb2396284aC7aDC84')
-
-const getFreeCirculation = async () => {
-    const data = await CONTRACT.methods.freeCirculation().call();
-    return data;
-}
-
-const getBalanceOf = async (address) => {
-    const data = await CONTRACT.methods.balanceOf(address).call();
-    return data;
-}
-
 const insertOneDB = async (obj) => {
     const db = client.db("uninutbotdb");
     const collection = db.collection("users");
@@ -64,6 +96,9 @@ const getFindMyInfo = async (id) => {
     return data ? data?.first_name : 'Haven`t info (please use registration)';
 }
 
+// bot function
+const bot = new Telegraf('1738399962:AAFOcarblTa3ZYlA7z5STs_y3E3o3GH8rSM')
+
 bot.start((ctx) => {
     ctx.reply('Welcome')
     // console.log('ctx', ctx)
@@ -85,10 +120,11 @@ bot.command('balanceof', ctx => {
 })
 bot.command('registration', async ctx => {
     ctx.reply(await insertOneDB(ctx.message.from))
-    // ctx.reply('You are registered')
-    // console.log(ctx.message.from)
 })
 bot.command('myinfo', async ctx => {
     ctx.reply(await getFindMyInfo(ctx.message.from.id))
+})
+bot.command('getpair', async ctx => {
+    ctx.reply(await getPairContract())
 })
 bot.launch()
