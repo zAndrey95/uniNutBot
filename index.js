@@ -54,7 +54,8 @@ const getFindMyInfo = async (id) => {
     const db = client.db("uninutbotdb");
     const collection = db.collection("users");
     const data = await collection.findOne({id: id});
-    return data.first_name;
+    console.log(data);
+    return data ? data?.first_name : 'Haven`t info (please use registration)';
 }
 
 bot.start((ctx) => {
@@ -82,7 +83,6 @@ bot.command('registration', ctx => {
     insertOneDB(ctx.message.from)
 })
 bot.command('myinfo', async ctx => {
-    ctx.reply('You are registered')
     ctx.reply(await getFindMyInfo(ctx.message.from.id))
 })
 bot.launch()
