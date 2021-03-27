@@ -4,11 +4,11 @@ import Web3 from 'web3';
 import mongodb from "mongodb";
 const MongoClient = mongodb.MongoClient; 
 
-import ABI from './ABI.json';
+import ABIGNBU from './ABIGNBU.json'; // gnbu test
 import pairAbiJson from './pairAbiJson.json';
 
 const web3 = new Web3('https://ropsten.infura.io/v3/8ca77c4631f14dccb88318200cfca61d')
-const CONTRACT = new web3.eth.Contract(ABI, '0x21AFF2C46C3AB351F18555deb2396284aC7aDC84')
+const CONTRACT = new web3.eth.Contract(ABIGNBU, '0x21AFF2C46C3AB351F18555deb2396284aC7aDC84') // gnbu test
 
 // get pair contract
 const PBTC = new Token(3, '0x9b3dcd8aa0fcc5d6dea920a2da28309908fa8a70', 18)
