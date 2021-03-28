@@ -48,6 +48,7 @@ export const getFindMyInfo = async (id) => {
 }
 
 export const findOneAndUpdateStep = async (data) => {
+    console.log(data);
     const db = client.db("uninutbotdb");
     const collection = db.collection("users");
     await collection.findOneAndUpdate({id: data.from.id}, { $set: {step: +data.text}});
