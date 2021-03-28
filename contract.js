@@ -96,9 +96,9 @@ export const getAmountOut = async (count, bool) => {
     console.log('getAmountOut');
     console.log(count);
     // нужно понять на какое число множить
-    const value = +count * 1000000000000000;
+    const value = +count * 1000000000000000000;
     console.log('value', value)
-    const data = await CUSTOME_CONTRACT.methods.getAmountOut(value, bool).call();
+    const data = await CUSTOME_CONTRACT.methods.getAmountOut(value.toString(), bool).call();
     console.log(data);
     const newLink = `${link}${data.counterTokenAmount}/${data.indexAmount}`;
     console.log(newLink);
@@ -108,7 +108,7 @@ export const getAmountOut = async (count, bool) => {
 export const getBurnAmount = async (count, bool) => {
     console.log('getBurnAmount');
     console.log(count);
-    const data = await CUSTOME_CONTRACT.methods.getBurnAmount(+count).call();
+    const data = await CUSTOME_CONTRACT.methods.getBurnAmount(count).call();
     console.log(data);
     const newLink = `${link}${data.amount0}/${data.amount1}`;
     return newLink;

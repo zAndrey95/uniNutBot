@@ -16,7 +16,8 @@ stepScene.enter((ctx) => ctx.reply('Please enter step'))
 // stepScene.hears('hi', enter('greeter'))
 stepScene.on('text', async (ctx) => {
     ctx.reply(await findOneAndUpdateStep(ctx.message)),
-    ctx.reply(await findOneAndUpdatePair(ctx))
+    ctx.reply(await findOneAndUpdatePair(ctx)),
+    leave()
 })
 stepScene.leave((ctx) => ctx.reply('Bye'))
 
@@ -44,7 +45,7 @@ calculationWETHScene.on('text', async (ctx) => {
     const pairETH = await getPairContract();
     const value = ctx.message.text;
     const count = value * pairETH[0];
-    ctx.reply(`You can buy: ${count} PBTC`)
+    await ctx.reply(`You can buy: ${count} PBTC`)
 })
 calculationWETHScene.leave((ctx) => ctx.reply('Bye'))
 // calculationPBTCScene 
@@ -54,7 +55,7 @@ calculationPBTCScene.on('text', async (ctx) => {
     const pairETH = await getPairContract();
     const value = ctx.message.text;
     const count = value * pairETH[1];
-    ctx.reply(`You can buy: ${count} WETH`)
+    await ctx.reply(`You can buy: ${count} WETH`)
 })
 calculationPBTCScene.leave((ctx) => ctx.reply('Bye'))
 
