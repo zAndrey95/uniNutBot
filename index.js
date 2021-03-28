@@ -64,15 +64,15 @@ const stage = new Scenes.Stage([stepScene, burnScene, amountOutPBTCScene, calcul
 bot.use(session())
 bot.use(stage.middleware())
 
-// bot.start((ctx) => {
-//     ctx.reply('Welcome BOT 3.14nut')
-// })
-bot.catch((err, ctx) => {
-    console.log(`Ooops, encountered an error for ${ctx.updateType}`, err)
-})
 bot.start((ctx) => {
     ctx.reply('Welcome BOT 3.14nut')
 })
+// bot.catch((err, ctx) => {
+//     console.log(`Ooops, encountered an error for ${ctx.updateType}`, err)
+// })
+// bot.start((ctx) => {
+//     ctx.reply('Welcome BOT 3.14nut')
+// })
 bot.command('menu', async (ctx) => {
     return await ctx.reply('Custom buttons keyboard', Markup
       .keyboard([
@@ -82,7 +82,6 @@ bot.command('menu', async (ctx) => {
       ])
       .oneTime()
       .resize()
-      .extra()
     )
 })
 bot.hears('📞 Registration', async ctx => {
