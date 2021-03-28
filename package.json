@@ -11,6 +11,6 @@
   },
   "type": "module",
   "scripts": {
-    "start": "node --experimental-json-modules run.js"
+    "start": "node --experimental-json-modules index.js"
   }
 }

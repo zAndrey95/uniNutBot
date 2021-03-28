@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import pairAbiJson from './pairAbiJson.json'
+import pairAbiJson from '../pairAbiJson.json'
 // const ABI = require('./ABI.json')
 
 const web3 = new Web3('https://ropsten.infura.io/v3/83f110c59bfd4cb596c7a4ac550f569f')
