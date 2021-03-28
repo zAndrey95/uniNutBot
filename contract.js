@@ -27,7 +27,13 @@ const changeListen = async (ctx) => {
     console.log(data.pair1);
 
     if(data.step) {
-        const pair = await getPairContract();
+        let pair;
+        try {
+            pair = await getPairContract();
+        } catch (error) {
+            pair = await getPairContract();
+        }
+        // const pair = await getPairContract();
         const res1 = (pair[0] - data.pair0)/data.pair0 * 100;
         const res2 = (pair[1] - data.pair1)/data.pair1 * 100;
         console.log(res1)
@@ -92,24 +98,37 @@ export const getPairContract = async () => {
     }
 }
 
-export const getAmountOut = async (count, bool) => {
+export const getAmountOut = async (count, bool, gen) => {
     console.log('getAmountOut');
     console.log(count);
     // нужно понять на какое число множить
     const value = +count * 1000000000000000000;
     console.log('value', value)
-    const data = await CUSTOME_CONTRACT.methods.getAmountOut(value.toString(), bool).call();
-    console.log(data);
-    const newLink = `${link}${data.counterTokenAmount}/${data.indexAmount}`;
-    console.log(newLink);
-    return newLink;
+    try {
+        const data = await CUSTOME_CONTRACT.methods.getAmountOut(value.toString(), bool).call();
+        console.log(data);
+        const newLink = `${link}${data.counterTokenAmount}/${data.indexAmount}`;
+        console.log(newLink);
+        if(gen) {
+            return newLink
+        } else {
+            return data;
+        }
+    } catch (error) {
+        return 'Error, please repeat'
+    }
+    
 }
 
-export const getBurnAmount = async (count, bool) => {
+export const getBurnAmount = async (count, gen) => {
     console.log('getBurnAmount');
     console.log(count);
     const data = await CUSTOME_CONTRACT.methods.getBurnAmount(count).call();
     console.log(data);
     const newLink = `${link}${data.amount0}/${data.amount1}`;
-    return newLink;
+    if(gen) {
+        return newLink
+    } else {
+        return data;
+    }
 }
